@@ -25,6 +25,16 @@ import taskRouter from './routes/task.routes.js';
 app.use("/api/v1/users", userRouter)
 app.use("/api/v1/tasks", taskRouter)
 
-
+// health check
+app.get('/api/v1/health', (_, res) => {
+    const dbState = mongoose.connection.readyState;
+    const dbStatus = dbState === 1 ? 'CONNECTED' : 'DISCONNECTED';
+  
+    res.status(dbState === 1 ? 200 : 503).json({
+      status: dbState === 1 ? 'UP' : 'DOWN',
+      database: dbStatus,
+      timestamp: new Date().toISOString()
+    });
+  });
 
 export default app
